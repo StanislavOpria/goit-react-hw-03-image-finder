@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 
+import { GalleryItem, Image } from './ImageGalleryItem.styled';
+
 export const ImageGalleryItem = ({ item: { webformatURL, tags } }) => {
   return (
-    <li>
-      <img src={webformatURL} alt={tags} />
-    </li>
+    <GalleryItem>
+      <Image src={webformatURL} alt={tags} />
+    </GalleryItem>
   );
 };
 

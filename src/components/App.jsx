@@ -3,7 +3,9 @@ import { getImages, getAdditionalImages } from 'services/serviceAPI';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Buttom';
-import { Audio } from 'react-loader-spinner';
+import { Loader } from './Loader/Loader';
+
+import { AppWraper } from './App.styled';
 
 export class App extends Component {
   state = {
@@ -15,23 +17,28 @@ export class App extends Component {
   };
 
   handleSubmit = async searchTerm => {
-    this.setState({ status: 'loading' });
-    try {
-      const collection = await getImages(searchTerm, 1);
-      if (collection instanceof Error) {
-        throw collection;
+    if (searchTerm.trim() !== '') {
+      this.setState({ status: 'loading' });
+      try {
+        const collection = await getImages(searchTerm, 1);
+        if (collection instanceof Error) {
+          throw collection;
+        }
+        if (collection.length === 0) {
+          this.setState({ status: 'idle' });
+          return alert(`No images found for your request "${searchTerm}"`);
+        }
+        this.setState({
+          searchTerm,
+          collection,
+          page: 1,
+          status: 'resolved',
+        });
+      } catch (error) {
+        this.setState({ error, status: 'rejected' });
       }
-      if (collection.length === 0) {
-        return alert(`No images found for request "${this.state.searchTerm}"`);
-      }
-      this.setState({
-        searchTerm,
-        collection,
-        page: 1,
-        status: 'resolved',
-      });
-    } catch (error) {
-      this.setState({ error, status: 'rejected' });
+    } else {
+      return alert('Tap somthing for request');
     }
   };
 
@@ -54,26 +61,15 @@ export class App extends Component {
   };
 
   render() {
-    const { collection } = this.state;
-    if (this.state.status === 'loading') {
-      return (
-        <Audio
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="loading"
-          wrapperStyle
-          wrapperClass
-        />
-      );
-    }
+    const { collection, status } = this.state;
     return (
-      <div>
+      <AppWraper>
         <Searchbar onSubmit={this.handleSubmit} />
         <ImageGallery collection={collection} />
-        <Button onClick={this.addImages} />
-      </div>
+        {status === 'loading' && <Loader />}
+        {status === 'resolved' && <Button onClick={this.addImages} />}
+        {status === 'rejected' && <p>Somthing goes wrong... Try againe.</p>}
+      </AppWraper>
     );
   }
 }

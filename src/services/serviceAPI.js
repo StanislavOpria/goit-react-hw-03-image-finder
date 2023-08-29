@@ -8,10 +8,7 @@ export const getImages = async (searchTerm, page) => {
     const response = await axios.get(
       `${endpoint}?key=${KEY_API}&q=${searchTerm}&page=${page}&per_page=12`
     );
-    if (response.status === 200) {
-      return response.data.hits;
-    }
-    return Promise.reject(new Error());
+    return response.data.hits;
   } catch (error) {
     return error;
   }

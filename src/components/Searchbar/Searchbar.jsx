@@ -1,6 +1,13 @@
 import PropTypes from 'prop-types';
-
 import { Component } from 'react';
+import { BiSearchAlt2 } from 'react-icons/bi';
+import {
+  Bar,
+  Form,
+  FormButton,
+  FormButtonLabel,
+  FormInput,
+} from './Searchbar.styled';
 
 export class Searchbar extends Component {
   state = {
@@ -18,21 +25,22 @@ export class Searchbar extends Component {
 
   render() {
     return (
-      <header>
-        <form onSubmit={this.handleSubmit}>
-          <button type="submit">
-            <span>Search</span>
-          </button>
+      <Bar>
+        <Form onSubmit={this.handleSubmit}>
+          <FormButton type="submit">
+            <BiSearchAlt2 width="36" height="36" />
+            {/* <FormButtonLabel></FormButtonLabel> */}
+          </FormButton>
 
-          <input
+          <FormInput
             onChange={this.handleChange}
             type="text"
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
           />
-        </form>
-      </header>
+        </Form>
+      </Bar>
     );
   }
 }
