@@ -1,13 +1,7 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { BiSearchAlt2 } from 'react-icons/bi';
-import {
-  Bar,
-  Form,
-  FormButton,
-  FormButtonLabel,
-  FormInput,
-} from './Searchbar.styled';
+import { Bar, Form, FormButton, FormInput } from './Searchbar.styled';
 
 export class Searchbar extends Component {
   state = {
