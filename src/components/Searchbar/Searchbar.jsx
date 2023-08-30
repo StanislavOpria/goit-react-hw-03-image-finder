@@ -28,8 +28,7 @@ export class Searchbar extends Component {
       <Bar>
         <Form onSubmit={this.handleSubmit}>
           <FormButton type="submit">
-            <BiSearchAlt2 width="36" height="36" />
-            {/* <FormButtonLabel></FormButtonLabel> */}
+            <BiSearchAlt2 style={{ width: '28px', height: '28px' }} />
           </FormButton>
 
           <FormInput
