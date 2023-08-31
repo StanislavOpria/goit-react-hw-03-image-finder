@@ -5,8 +5,8 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Buttom';
 import { Loader } from './Loader/Loader';
 import { Modal } from './Modal/Modal';
-
 import { AppWraper } from './App.styled';
+import { render } from 'react-dom';
 
 export class App extends Component {
   state = {
@@ -19,54 +19,65 @@ export class App extends Component {
     image: '',
   };
 
-  handleSubmit = async searchTerm => {
-    if (searchTerm.trim() !== '') {
+  async componentDidUpdate(_, prevState) {
+    const { searchTerm: newSearchTerm, page: newPage } = this.state;
+    const { searchTerm: prevSearchTerm, page: prevPage } = prevState;
+
+    if (newSearchTerm !== prevSearchTerm || newPage !== prevPage) {
       this.setState({ status: 'loading' });
       try {
-        const collection = await getImages(searchTerm, 1);
+        const collection = await getImages(newSearchTerm, newPage);
         if (collection instanceof Error) {
           throw collection;
         }
-        if (collection.length === 0) {
+        if (collection.length === 0 && newSearchTerm !== prevSearchTerm) {
           this.setState(
             {
               status: 'idle',
               collection,
             },
-            () => alert(`No images found for your request "${searchTerm}"`)
+            () => alert(`No images found for your request "${newSearchTerm}"`)
           );
           return;
         }
-        this.setState({
-          searchTerm,
-          collection,
-          page: 1,
+        if (collection.length === 0) {
+          this.setState(
+            {
+              status: 'resolved',
+            },
+            () => alert(`No more images by request "${newSearchTerm}"`)
+          );
+          return;
+        }
+        this.setState(prevState => ({
+          collection: [...prevState.collection, ...collection],
           status: 'resolved',
-        });
+        }));
       } catch (error) {
         this.setState({ error, status: 'rejected' });
       }
+    }
+  }
+
+  handleSubmit = searchTerm => {
+    if (searchTerm.trim() !== '') {
+      if (searchTerm === this.state.searchTerm) {
+        return;
+      }
+      this.setState({
+        searchTerm,
+        page: 1,
+        collection: [],
+      });
     } else {
       return alert('Tap somthing for request');
     }
   };
 
-  addImages = async () => {
-    const { searchTerm, page } = this.state;
-    this.setState({ status: 'loading' });
-    try {
-      const additionalСollection = await getImages(searchTerm, page + 1);
-      if (additionalСollection instanceof Error) {
-        throw additionalСollection;
-      }
-      this.setState(prevState => ({
-        collection: [...prevState.collection, ...additionalСollection],
-        page: prevState.page + 1,
-        status: 'resolved',
-      }));
-    } catch (error) {
-      this.setState({ error, status: 'rejected' });
-    }
+  addImages = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
   };
 
   handleModal = image => {
