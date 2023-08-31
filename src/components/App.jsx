@@ -6,7 +6,6 @@ import { Button } from './Button/Buttom';
 import { Loader } from './Loader/Loader';
 import { Modal } from './Modal/Modal';
 import { AppWraper } from './App.styled';
-import { render } from 'react-dom';
 
 export class App extends Component {
   state = {
